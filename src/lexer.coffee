@@ -85,11 +85,21 @@ exports.Lexer = class Lexer
       (prev = last @tokens) and (prev[0] in ['.', '?.', '::'] or
       not prev.spaced and prev[0] is '@')
     tag = 'IDENTIFIER'
+    
+    # TODO: Remove
+    # (ABI) Add custom support for ~> which is synonymous with return
+    # '~<' and any other token that's classified as COMPARE is also valid which is something we want to disallow
+    # if id is '~' and @tag() is 'COMPARE'
+    #     tag = 'RETURN'
 
     if not forcedIdentifier and (id in JS_KEYWORDS or id in COFFEE_KEYWORDS)
       tag = id.toUpperCase()
       if tag is 'WHEN' and @tag() in LINE_BREAK
         tag = 'LEADING_WHEN'
+      # (ABI) `send` is also now a keyword that is synonymous with return
+      # Of course, this is a terrible name
+      else if tag is 'SEND'
+        tag = 'RETURN'
       else if tag is 'FOR'
         @seenFor = yes
       else if tag is 'UNLESS'
@@ -321,6 +331,19 @@ exports.Lexer = class Lexer
       value = @chunk.charAt 0
     tag  = value
     prev = last @tokens
+    
+    # (ABI)
+    if value is '~>'
+        @token 'RETURN', '~>'
+        return 2
+     
+    # (ABI)   
+    if value is '!' and prev[0] in CALLABLE and not prev.spaced 
+        prev[0] = 'FUNC_EXIST' if prev[0] is '?' # TODO: What is this line for?
+        @token 'CALL_START', '('
+        @token 'CALL_END', '('
+        return 1
+            
     if value is '=' and prev
       if not prev[1].reserved and prev[1] in JS_FORBIDDEN
         @error "Reserved word \"#{@value()}\" can't be assigned"
@@ -533,7 +556,7 @@ JS_KEYWORDS = [
 ]
 
 # CoffeeScript-only keywords.
-COFFEE_KEYWORDS = ['undefined', 'then', 'unless', 'until', 'loop', 'of', 'by', 'when']
+COFFEE_KEYWORDS = ['undefined', 'then', 'unless', 'until', 'loop', 'of', 'by', 'when', 'send']
 
 COFFEE_ALIAS_MAP =
   and  : '&&'
@@ -579,6 +602,7 @@ HEREDOC    = /// ^ ("""|''') ([\s\S]*?) (?:\n[^\n\S]*)? \1 ///
 
 OPERATOR   = /// ^ (
   ?: [-=]>             # function
+   | ~>                # (ABI) return statement
    | [-+*/%<>&|^!?=]=  # compound assign / compare
    | >>>=?             # zero-fill right shift
    | ([-+:])\1         # doubles

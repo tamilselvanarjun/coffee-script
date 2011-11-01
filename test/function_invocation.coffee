@@ -506,3 +506,25 @@ test "#1416: don't omit one 'new' when compiling 'new new fn()()'", ->
   eq obj.prop, nonce
   eq obj.a, argNonceA
   eq obj.b, argNonceB
+  
+# (ABI) New tests for the features I added to the language
+test "Execute function calls that pass in no argument with the syntax func!", ->
+    x = 0
+    fn = () -> x = 5
+    eq x, 0
+    eq fn!, 5
+    eq x, 5
+
+test "New keyword 'send' which is synoynmous with 'return'", ->
+    fn = () ->
+        send 5
+        4
+    eq fn(), 5
+        
+test "New symbol '~>' which is synoynmous with 'return'", ->
+    fn = () ->
+        ~> 5
+        4
+    eq fn(), 5
+    
+# TODO: Write a test that syntax errors will be thrown when you use `send` in bad places

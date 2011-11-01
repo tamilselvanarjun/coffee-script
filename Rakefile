@@ -76,3 +76,16 @@ end
     end
   end
 end
+
+task :abi do
+  system('cake build && cake build:parser && cake test')
+end
+
+# When we don't change, the grammer, we don't have to rebuild the parser which takes a lot of time
+task :nogram do
+  system('cake build && cake test')
+end
+
+task :diff do
+  system('git diff src test')
+end

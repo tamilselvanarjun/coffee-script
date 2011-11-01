@@ -305,6 +305,7 @@ grammar =
   # The list of arguments to a function call.
   Arguments: [
     o 'CALL_START CALL_END',                    -> []
+    o 'CALL_START UNARY',                       -> []       # (ABI)
     o 'CALL_START ArgList OptComma CALL_END',   -> $2
   ]
 
