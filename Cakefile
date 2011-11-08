@@ -231,7 +231,6 @@ runTests = (CoffeeScript) ->
 task 'test', 'run the CoffeeScript language test suite', ->
   runTests CoffeeScript
 
-
 task 'test:browser', 'run the test suite against the merged browser script', ->
   source = fs.readFileSync 'extras/coffee-script.js', 'utf-8'
   result = {}

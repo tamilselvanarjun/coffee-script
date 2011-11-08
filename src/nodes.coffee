@@ -452,6 +452,16 @@ exports.Comment = class Comment extends Base
     code = o.indent + code if (level or o.level) is LEVEL_TOP
     code
 
+#### Export
+
+exports.Exporting = class Exporting extends Base
+  constructor: (@exports) ->
+  children: []
+  compileNode: (o, level) ->
+    console.log @exports
+    code = 'exports.test = test'
+    code
+
 #### Call
 
 # Node for a function invocation. Takes care of converting `super()` calls into

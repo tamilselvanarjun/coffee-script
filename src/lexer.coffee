@@ -7,6 +7,7 @@
 #
 # Which is a format that can be fed directly into [Jison](http://github.com/zaach/jison).
 
+ex = require 'exceptional'
 {Rewriter, INVERSES} = require './rewriter'
 
 # Import the helpers we need.
@@ -556,7 +557,7 @@ JS_KEYWORDS = [
 ]
 
 # CoffeeScript-only keywords.
-COFFEE_KEYWORDS = ['undefined', 'then', 'unless', 'until', 'loop', 'of', 'by', 'when', 'send']
+COFFEE_KEYWORDS = ['undefined', 'then', 'unless', 'until', 'loop', 'of', 'by', 'when', 'send', 'exporting']
 
 COFFEE_ALIAS_MAP =
   and  : '&&'

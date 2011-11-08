@@ -153,7 +153,14 @@ grammar =
     o 'AlphaNumeric'
     o 'ThisProperty'
   ]
-
+  
+  # A export statement
+  # exports.generateProject = generateProject
+  
+  Exporting: [
+      o 'EXPORTING Expression',                    -> new Export $2
+  ]
+  
   # A return statement from a function body.
   Return: [
     o 'RETURN Expression',                      -> new Return $2
