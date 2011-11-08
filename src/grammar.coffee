@@ -79,6 +79,7 @@ grammar =
     o 'Return'
     o 'Throw'
     o 'Comment'
+    o 'Exporting' # ABI
     o 'STATEMENT',                              -> new Literal $1
   ]
 
@@ -158,7 +159,7 @@ grammar =
   # exports.generateProject = generateProject
   
   Exporting: [
-      o 'EXPORTING Expression',                    -> new Export $2
+      o 'EXPORTING STRING',                    -> new Exporting $2
   ]
   
   # A return statement from a function body.

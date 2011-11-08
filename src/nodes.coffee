@@ -456,7 +456,7 @@ exports.Comment = class Comment extends Base
 
 exports.Exporting = class Exporting extends Base
   constructor: (@exports) ->
-  children: []
+  children: ['exports']
   compileNode: (o, level) ->
     console.log @exports
     code = 'exports.test = test'
