@@ -155,11 +155,10 @@ grammar =
     o 'ThisProperty'
   ]
   
-  # A export statement
+  # A export statement (ABI)
   # exports.generateProject = generateProject
-  
   Exporting: [
-      o 'EXPORTING STRING',                    -> new Exporting $2
+    o 'EXPORTING ExportList',                   -> new Exporting $2
   ]
   
   # A return statement from a function body.
@@ -363,6 +362,12 @@ grammar =
     o 'ArgList OptComma INDENT ArgList OptComma OUTDENT', -> $1.concat $4
   ]
 
+  # ABI: We won't be as thorough as ArgList, instead
+  ExportList: [
+    o 'Identifier',                                      -> [$1]
+    o 'ExportList , Identifier',                         -> $1.concat $3
+  ]
+  
   # Valid arguments are Blocks or Splats.
   Arg: [
     o 'Expression'

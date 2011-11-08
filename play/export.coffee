@@ -1,2 +1,2 @@
 a = 10
-exporting 'a'
+exporting a, b

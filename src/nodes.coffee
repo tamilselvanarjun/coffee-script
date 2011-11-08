@@ -459,7 +459,9 @@ exports.Exporting = class Exporting extends Base
   children: ['exports']
   compileNode: (o, level) ->
     # code = @exports.compileNode!
-    code = "#{@tab}exports[#{@exports}] = #{eval(@exports)}"
+    code = ""
+    for exp in @exports
+        code += "#{@tab}exports[#{exp}] = " + exp.toString().split('"')[1] + ";\n"
     code
 
 #### Call
