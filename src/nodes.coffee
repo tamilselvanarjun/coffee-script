@@ -458,8 +458,8 @@ exports.Exporting = class Exporting extends Base
   constructor: (@exports) ->
   children: ['exports']
   compileNode: (o, level) ->
-    console.log @exports
-    code = 'exports.test = test'
+    # code = @exports.compileNode!
+    code = "#{@tab}exports[#{@exports}] = #{eval(@exports)}"
     code
 
 #### Call

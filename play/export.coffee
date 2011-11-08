@@ -1,2 +1,2 @@
-a = 5
+a = 10
 exporting 'a'
