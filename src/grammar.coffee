@@ -155,12 +155,6 @@ grammar =
     o 'ThisProperty'
   ]
   
-  # A export statement (ABI)
-  # exports.generateProject = generateProject
-  Exporting: [
-    o 'EXPORTING ExportList',                   -> new Exporting $2
-  ]
-  
   # A return statement from a function body.
   Return: [
     o 'RETURN Expression',                      -> new Return $2
@@ -592,6 +586,20 @@ operators = [
 # terminals (every symbol which does not appear as the name of a rule above)
 # as "tokens".
 tokens = []
+
+# Extensions
+exts = require('./extend').exts
+for ext in exts
+  if ext.stage is 'parser'
+    for name, alternatives of ext.grammar
+      if name of grammar
+        grammar[name].concat alternatives
+      else
+        grammar[name] = alternatives
+        
+    # # Add the extend.coffee stuff in here
+    #   grammar[]
+
 for name, alternatives of grammar
   grammar[name] = for alt in alternatives
     for token in alt[0].split ' '

@@ -32,12 +32,9 @@ exports.RESERVED = RESERVED
 exports.helpers = require './helpers'
 
 setupOptions = (options) ->
-  console.log 'Extends...'
   ext = require('./extend').exts
-  console.dir require('./extend').exts
-  options.extensions = []
+  options.extensions = options.extensions or []
   options.extensions = options.extensions.concat ext
-  console.dir options.extensions
   return options
   
 # Compile a string of CoffeeScript code to JavaScript, using the Coffee/Jison
@@ -86,10 +83,8 @@ exports.run = (code, options) ->
 
   # Compile.
   if path.extname(mainModule.filename) isnt '.coffee' or require.extensions
-    console.log 'This path'
     mainModule._compile compile(code, options), mainModule.filename
   else
-    console.log 'Alternative path'
     mainModule._compile code, mainModule.filename
 
 # Compile and evaluate a string of CoffeeScript (in a Node.js-like environment).

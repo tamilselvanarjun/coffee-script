@@ -452,18 +452,6 @@ exports.Comment = class Comment extends Base
     code = o.indent + code if (level or o.level) is LEVEL_TOP
     code
 
-#### Export
-
-exports.Exporting = class Exporting extends Base
-  constructor: (@exports) ->
-  children: ['exports']
-  compileNode: (o, level) ->
-    # code = @exports.compileNode!
-    code = ""
-    for exp in @exports
-        code += "#{@tab}exports[#{exp}] = " + exp.toString().split('"')[1] + ";\n"
-    code
-
 #### Call
 
 # Node for a function invocation. Takes care of converting `super()` calls into
@@ -1637,6 +1625,15 @@ exports.For = class For extends While
       body.expressions[idx] = new Call base, expr.args
       defs += @tab + new Assign(ref, fn).compile(o, LEVEL_TOP) + ';\n'
     defs
+    
+# EXTENSION (ABI)
+    
+exts = require('./extend').exts
+for ext in exts
+  if ext.stage is 'ast'
+    for node in ext.nodes
+      [name, cls] = node
+      exports[name] = cls
 
 #### Switch
 

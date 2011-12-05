@@ -89,7 +89,7 @@ end
 # Fresh (does a git checkout of the `lib` directory first) and then, executes the grammar
 task :fnogram do
   system('git checkout -- lib/')
-  system('cake build && cake test')
+  system('cake build && cake build:parser && cake test')
 end
 
 task :diff do

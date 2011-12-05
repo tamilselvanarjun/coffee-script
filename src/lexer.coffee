@@ -336,8 +336,6 @@ exports.Lexer = class Lexer
     
     # (ABI)
     for ext in @extensions
-      console.log "Extension.."
-      console.log ext
       if ext.type is 'literal'
         val = ext.code.apply @, []
         if val
@@ -567,8 +565,15 @@ JS_KEYWORDS = [
 ]
 
 # CoffeeScript-only keywords.
-COFFEE_KEYWORDS = ['undefined', 'then', 'unless', 'until', 'loop', 'of', 'by', 'when', 'send', 'exporting']
+COFFEE_KEYWORDS = ['undefined', 'then', 'unless', 'until', 'loop', 'of', 'by', 'when', 'send']
 
+# Read all extensions and add new keywords
+# EXTENSION
+exts = require('./extend').exts
+for ext in exts
+  if ext.stage is 'lexer' and ext.type is 'coffee_keywords'
+    COFFEE_KEYWORDS.push ext.code
+    
 COFFEE_ALIAS_MAP =
   and  : '&&'
   or   : '||'
