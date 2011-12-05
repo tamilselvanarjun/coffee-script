@@ -11,6 +11,9 @@ path             = require 'path'
 {Lexer,RESERVED} = require './lexer'
 {parser}         = require './parser'
 
+# Exceptional
+ex = require 'exceptional'
+
 # TODO: Remove registerExtension when fully deprecated.
 if require.extensions
   require.extensions['.coffee'] = (module, filename) ->
@@ -28,23 +31,37 @@ exports.RESERVED = RESERVED
 # Expose helpers for testing.
 exports.helpers = require './helpers'
 
+setupOptions = (options) ->
+  console.log 'Extends...'
+  ext = require('./extend').exts
+  console.dir require('./extend').exts
+  options.extensions = []
+  options.extensions = options.extensions.concat ext
+  console.dir options.extensions
+  return options
+  
 # Compile a string of CoffeeScript code to JavaScript, using the Coffee/Jison
 # compiler.
 exports.compile = compile = (code, options = {}) ->
+  # Extend the options object, don't add to it
+  options = setupOptions(options)
   try
-    (parser.parse lexer.tokenize code).compile options
+    (parser.parse lexer.tokenize(code, options)).compile options
   catch err
     err.message = "In #{options.filename}, #{err.message}" if options.filename
     throw err
 
 # Tokenize a string of CoffeeScript code, and return the array of tokens.
 exports.tokens = (code, options) ->
+  # code.apply @, 
+  options = setupOptions(options)
   lexer.tokenize code, options
 
 # Parse a string of CoffeeScript code or an array of lexed tokens, and
 # return the AST. You can then compile it by calling `.compile()` on the root,
 # or traverse it by using `.traverse()` with a callback.
 exports.nodes = (source, options) ->
+  options = setupOptions(options)
   if typeof source is 'string'
     parser.parse lexer.tokenize source, options
   else
@@ -69,8 +86,10 @@ exports.run = (code, options) ->
 
   # Compile.
   if path.extname(mainModule.filename) isnt '.coffee' or require.extensions
+    console.log 'This path'
     mainModule._compile compile(code, options), mainModule.filename
   else
+    console.log 'Alternative path'
     mainModule._compile code, mainModule.filename
 
 # Compile and evaluate a string of CoffeeScript (in a Node.js-like environment).

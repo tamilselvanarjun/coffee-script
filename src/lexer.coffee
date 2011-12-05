@@ -7,7 +7,6 @@
 #
 # Which is a format that can be fed directly into [Jison](http://github.com/zaach/jison).
 
-ex = require 'exceptional'
 {Rewriter, INVERSES} = require './rewriter'
 
 # Import the helpers we need.
@@ -44,7 +43,9 @@ exports.Lexer = class Lexer
     @indents = []             # The stack of all current indentation levels.
     @ends    = []             # The stack for pairing up tokens.
     @tokens  = []             # Stream of parsed tokens in the form `['TYPE', value, line]`.
-
+    
+    @extensions = opts.extensions or []
+    
     # At every position, run through this list of attempted matches,
     # short-circuiting if any of them succeed. Their order determines precedence:
     # `@literalToken` is the fallback catch-all.
@@ -334,16 +335,25 @@ exports.Lexer = class Lexer
     prev = last @tokens
     
     # (ABI)
+    for ext in @extensions
+      console.log "Extension.."
+      console.log ext
+      if ext.type is 'literal'
+        val = ext.code.apply @, []
+        if val
+          return val
+          
+    # (ABI)
     if value is '~>'
         @token 'RETURN', '~>'
         return 2
      
     # (ABI)   
-    if value is '!' and prev[0] in CALLABLE and not prev.spaced 
-        prev[0] = 'FUNC_EXIST' if prev[0] is '?' # TODO: What is this line for?
-        @token 'CALL_START', '('
-        @token 'CALL_END', '('
-        return 1
+    # if value is '!' and prev[0] in CALLABLE and not prev.spaced 
+    #     prev[0] = 'FUNC_EXIST' if prev[0] is '?' # TODO: What is this line for?
+    #     @token 'CALL_START', '('
+    #     @token 'CALL_END', '('
+    #     return 1
             
     if value is '=' and prev
       if not prev[1].reserved and prev[1] in JS_FORBIDDEN

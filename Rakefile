@@ -86,6 +86,12 @@ task :nogram do
   system('cake build && cake test')
 end
 
+# Fresh (does a git checkout of the `lib` directory first) and then, executes the grammar
+task :fnogram do
+  system('git checkout -- lib/')
+  system('cake build && cake test')
+end
+
 task :diff do
   system('git diff src test')
 end
